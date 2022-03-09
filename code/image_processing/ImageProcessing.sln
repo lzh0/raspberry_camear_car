@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "follow_line", "follow_line.pyproj", "{D245FAB9-5581-48FB-BAE4-03F6E3AC4E0A}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ImageProcessing", "ImageProcessing.pyproj", "{D245FAB9-5581-48FB-BAE4-03F6E3AC4E0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

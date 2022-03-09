@@ -5,11 +5,11 @@
     <ProjectGuid>d245fab9-5581-48fb-bae4-03f6e3ac4e0a</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>main_follo_line.py</StartupFile>
+    <StartupFile>ImageProcessing.py</StartupFile>
     <SearchPath>mymodel</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>follow_line</Name>
+    <Name>ImageProcessing</Name>
     <RootNamespace>image_processing</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|env_conda_python3_6</InterpreterId>
   </PropertyGroup>
@@ -25,7 +25,7 @@
     <InterpreterReference Include="CondaEnv|CondaEnv|env_conda_python3_6" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="main_follo_line.py" />
+    <Compile Include="ImageProcessing.py" />
     <Compile Include="mymodel\FindCentrePoint.py" />
   </ItemGroup>
   <ItemGroup>

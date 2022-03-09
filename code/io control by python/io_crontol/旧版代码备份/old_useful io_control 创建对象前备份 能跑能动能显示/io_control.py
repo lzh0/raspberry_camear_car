@@ -1,3 +1,4 @@
+from telnetlib import NOP
 import RPi.GPIO as gpio
 import cv2
 import time
@@ -6,20 +7,49 @@ import ImageProcessing as imgproc
 import FindCentrePoint as fcp
 
 
+'''
+#摄像头小车程序规划：
+1.摄像头一个类
+2.电机一个类（DC直流电机、舵机、步进电机）、【要包含控制算法嘛...?
+3.图像处理一个类（也许能和摄像头类合并？
+4.
+'''
 
-img=np.zeros((50,50,3),np.uint8)
-ctrl_pin=(11,15)
-ctrl_pin2=(12,16)
+img=np.zeros((1,1,3),np.uint8)
+
+ctrl_pin=[11,15]#左侧电机IO脚
+ctrl_pin2=[12,16]#右侧电机IO脚
+
+'''
+#创建电机类要解决的问题：
+统合IO初始化和控制：
+gpio.setwarnings()
+gpio.setmode()
+gpio_init_setup()
+pwm_init()
+gpio_digital_write()
+go_street()
+....
+stop()
+'''
 
 
 
-    
-gpio.setmode(gpio.BOARD)
+
+
+
+#rasp Pi 主板不包含硬件模数转换器ADC,所以只有数字量的输入输出
+gpio.setmode(gpio.BOARD)#引脚IO编号方式选择二选一，BOARD（物理上的板子IO脚编号）和BCM（指的是 Broadcom SOC 上的通道号。您必须始终使用图表），建议BOARD，BCM可能会变动且需要查表
+
+
+gpio.setwarnings(False)#忽略警告#GPIO 上可能有多个脚本/电路。如果 RPi.GPIO 检测到引脚已配置为默认值（输入）以外的内容，则在尝试配置脚本时会收到警告。要禁用这些警告：使用False
 
 gpio.setup(ctrl_pin+ctrl_pin2, gpio.OUT)
-gpio.setwarnings(False)#忽略警告
 
 
+
+
+    #可以设计通过函数创建一个列表对象，通过输入PWM引脚号自动创建并初始化PWM对象，（用list.append()
 
 pwm0 = gpio.PWM(ctrl_pin[0], 1500)# 第二个参数 freq 是频率，单位为 Hz
 pwm0.start(0)
@@ -29,7 +59,6 @@ pwm_0 = gpio.PWM(ctrl_pin2[0], 1500)# 第二个参数 freq 是频率，单位为
 pwm_0.start(0)
 pwm_1 = gpio.PWM(ctrl_pin2[1], 1500)
 pwm_1.start(0)
-
 
 
 def returnCameraIndexes():
@@ -50,47 +79,45 @@ def open_camera():
     
     
 
-def gpio_digital_write():
-    gpio.output(11, gpio.LOW)
-    gpio.output(15, gpio.LOW)
+def gpio_digital_write():   #IO口开关量控制
+    gpio.output(ctrl_pin, gpio.LOW)#设置低电平
+    gpio.output(ctrl_pin2, gpio.LOW)
 
-def go_street(speed_precent):
-    pwm0.ChangeDutyCycle(speed_precent)
+def go_street(speed_precent):   #直走，左右侧电机同向向前
+    pwm0.ChangeDutyCycle(0) #ChangeDutyCycle(n) 占空比调节，n为占空比# n的范围： 0.0 <= n <= 100.0
     pwm1.ChangeDutyCycle(speed_precent)
-
-    pwm_0.ChangeDutyCycle(speed_precent)
+    pwm_0.ChangeDutyCycle(0)
     pwm_1.ChangeDutyCycle(speed_precent)
-    #time.sleep(0.5)
-    #pwm0.ChangeDutyCycle(0)
-    #pwm1.ChangeDutyCycle(0)
-    #time.sleep(0.1)
+    
 
-def turn_left(speed_precent):
+def turn_left(speed_precent):#anticlockwise 顶视图下逆时针旋转，左侧电机后退，右侧电机前进
     pwm0.ChangeDutyCycle(0)
     pwm1.ChangeDutyCycle(speed_precent)
+    pwm_0.ChangeDutyCycle(speed_precent)
+    pwm_1.ChangeDutyCycle(0)
+    
 
-    #time.sleep(0.5)
-    #pwm0.ChangeDutyCycle(0)
-    #pwm1.ChangeDutyCycle(0)
-    #time.sleep(0.1)
-'''
-def turn_right(speed_precent):
+def turn_right(speed_precent):#clockwise    顶视图下顺时针方向旋转，左侧电机前进，右侧电机后退
     pwm0.ChangeDutyCycle(speed_precent)
     pwm1.ChangeDutyCycle(0)
-    #time.sleep(0.5)
-    #pwm0.ChangeDutyCycle(0)
-    #pwm1.ChangeDutyCycle(0)
-    #time.sleep(0.1)
-'''
-def turn_left_back():
+    pwm_0.ChangeDutyCycle(0)
+    pwm_1.ChangeDutyCycle(speed_precent)
+    
+
+def turn_back(speed_precent):
     pwm0.ChangeDutyCycle(speed_precent)
     pwm1.ChangeDutyCycle(0)
-
-def turn_right_back():
+    pwm_0.ChangeDutyCycle(speed_precent)
+    pwm_1.ChangeDutyCycle(0)
 def stop():
+    
     pwm0.ChangeDutyCycle(0)
     pwm1.ChangeDutyCycle(0)
-
+    pwm_0.ChangeDutyCycle(0)
+    pwm_1.ChangeDutyCycle(0)
+    
+    #gpio_digital_write()#nouse
+    
 
 def get_keyboard_press(fd_choose,blocking:bool): #既然反正都要用到cv2.waitKey(1)，那为什么不用呢
     #存在问题！！！，感觉不如cv2.waitKey(1)，get_keyboard_press(0,Flase)情况下存在严重的键盘按键漏检、无响应等情况
@@ -132,16 +159,17 @@ def main():
         keyboard_press=cv2.waitKey(1)
         if keyboard_press==ord('w'):
             print('getchar w')
-            go_street(50)
+            go_street(5)
         elif keyboard_press==ord('a'):
             print('getchar a')
-            turn_left(100)
+            turn_left(5)
         elif keyboard_press==ord('d'):
             print('getchar d')
-            turn_right(100)
+            turn_right(5)
         elif keyboard_press==ord('s'):
             print('s')
-            stop()
+            turn_back(5)
+            #stop()
         elif keyboard_press==ord('q'):
             print('getchar q')
             gpio.cleanup()
@@ -154,10 +182,10 @@ def main():
                 cv2.imshow('img',img)
                 if imgproc.image_processing(img,'get_x',False)>400:#车辆偏右
                     #左转
-                    turn_right(20)
+                    turn_right(3)
                 else:
                     
-                    turn_left(20)
+                    turn_left(3)
                 keyboard_press=cv2.waitKey(1)
                 if keyboard_press==ord('q'):
                     gpio.cleanup()

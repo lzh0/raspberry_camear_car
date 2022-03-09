@@ -6,7 +6,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 #import scipy.ndimage as ndi
 #mytest.tphel()
-img=cv2.imread('E:\\road.jpg')
+#img=cv2.imread('E:\\road.jpg')
 def image_processing(original_image,recognition_mode:str,img_display:bool):
     img=original_image
 

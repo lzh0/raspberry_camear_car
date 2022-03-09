@@ -40,7 +40,8 @@ def skeleton_extraction(binary_image): #骨架提取发获得中轴线、点，�
     return x,y,skeleton
 
 
-#改自幻尔四足巡线代码
+#改自幻尔四足巡线代码,原版采用将画面横切三段后将每段识别到的中心点坐标按每段宽度求加权平均的方式得到当前画面识别到的中点
+#本函数目前采用单段全屏
 def get_x(img,mask):
     '''
     范围区域图像内色块的中心坐标X
@@ -71,8 +72,7 @@ def get_x(img,mask):
     cv2.imshow('mask', mask)
     '''
     
-    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-                            cv2.CHAIN_APPROX_SIMPLE)[-2]
+    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
     if len(cnts):
         c = max(cnts, key=cv2.contourArea)  # 找出最大的区域
         area = cv2.contourArea(c)
@@ -86,6 +86,7 @@ def get_x(img,mask):
             box = cv2.boxPoints(rect)
             # 数据类型转换
             box = np.int0(box)
+
             # 绘制轮廓
             cv2.drawContours(img, [box], 0, (0, 255, 255), 1)
     return x
