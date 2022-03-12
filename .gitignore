@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+FETCH_HEAD
 # C extensions
 *.so
 
