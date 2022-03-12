@@ -1,0 +1,14 @@
+git branch #查看当前分支
+git branch develop#创建develop分支
+git branch -d develop#删除develop分支#注意从一个分支到另一个分支应用合并而不是创和删
+git checkout develop#切换到develop分支
+
+git add .	#本地仓库缓存新增
+git commit -m ''提交内容介绍"
+git checkout master#切换到master分支
+git merge develop#把develop分支的代码合并到master上
+
+git pull https://url.. develop#提交到远程仓库的develop分支
+git status#查看状态
+git pull https://github.com/lzh0/raspberry_camear_car.git master #提交到远程仓库的master 分支
+
