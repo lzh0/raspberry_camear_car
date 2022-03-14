@@ -8,7 +8,17 @@ git commit -m ''提交内容介绍"
 git checkout master#切换到master分支
 git merge develop#把develop分支的代码合并到master上
 
+git push --set-upstream https://url..develop支名#创建远程仓库的develop分支
 git pull https://url.. develop#提交到远程仓库的develop分支
 git status#查看状态
 git pull https://github.com/lzh0/raspberry_camear_car.git master #提交到远程仓库的master 分支
 
+使用命令行合并远程分支：
+第 1 步：从您的项目存储库中引入更改并进行测试。
+git fetch origin 
+git checkout -b develop origin/develop 
+git merge master
+第 2 步：在 GitHub 上合并更改和更新。
+git checkout master 
+git merge --no-ff develop 
+git push origin master
